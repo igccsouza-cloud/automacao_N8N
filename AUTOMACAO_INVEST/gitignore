@@ -1,0 +1,12 @@
+# n8n export files
+*.env
+node_modules/
+.n8n/
+auth.json
+
+# Credentials (Caso você salve em arquivos separados)
+credentials.json
+
+# System files
+.DS_Store
+Thumbs.db
