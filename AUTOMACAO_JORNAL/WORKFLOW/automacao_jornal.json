@@ -1,0 +1,253 @@
+{
+  "name": "automacao_jornal",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
+            }
+          ]
+        },
+        "filters": {
+          "labelIds": []
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -224,
+        0
+      ],
+      "id": "f004f145-9a5b-48f0-8d6e-114fcc010d86",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "j1mwE9oht6K5FZwG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "93141fb5-a3c9-49b2-8cb4-e5bf5520beee",
+              "leftValue": "={{ $json.headers.from }}",
+              "rightValue": "contato@thenewscc.com.br",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        256,
+        0
+      ],
+      "id": "dcdd1bc0-9c91-4ea4-88e2-ecb46d8d981b",
+      "name": "If",
+      "executeOnce": false,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const staticData = $getWorkflowStaticData('global')\n\n\nif (!staticData.processedEmails) {\n  staticData.processedEmails = {};\n}\n\nconst emailId = $json.id;\n\nif (staticData.processedEmails[emailId]) {\n  // Já foi lido → para o fluxo\n  return [];\n}\n\n// Marca como ainda não processado (mas vai marcar depois)\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -16
+      ],
+      "id": "0d5b69c7-de77-4c2d-8a7e-a0f681fd8a26",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "chatId": "6417237816",
+        "text": "=\n{{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "=HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1328,
+        -16
+      ],
+      "id": "518671d5-c241-4e2c-8970-824cc2e132ed",
+      "name": "Send a text message",
+      "webhookId": "1f016518-5b44-480c-87c7-3c66f68be772",
+      "credentials": {
+        "telegramApi": {
+          "id": "2eDcAO3jyzWFaHgv",
+          "name": "telegram_jornal"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Você é um assistente que resume newsletters.\n\nadicione tambem a data, sem o horário: {{ $json.date }}\n\nResuma o conteúdo abaixo, deixando claro que é o jornal do dia, (sem usar asteriscos, tente dar destaque a mensagem de outra maneira) de forma simpática e com emojis com atré no máximo 1500 carcteres :\n\n{{ $json.html }}\n\nNo final, escreva exatamente: 🔗 Leia online: https://thenewscc.beehiiv.com/",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        864,
+        -16
+      ],
+      "id": "020f026e-9a32-4b45-b794-9ccd6c055cea",
+      "name": "AI Agent",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "messageId": "={{ $json.id }}",
+        "simple": false,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "f1e7988e-fe77-4aee-832a-283cca2ce51b",
+      "name": "Get a message",
+      "webhookId": "4fd875d3-2222-4d34-bbae-252bdbc18639",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "j1mwE9oht6K5FZwG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        736,
+        192
+      ],
+      "id": "f71a0623-aa3e-4b14-b623-3a708e18f3f9",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "It9mz2g1zaMqvVuF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a message": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1
+  },
+  "versionId": "86abccd2-20f0-47cf-a483-e4da993c99b2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4e296ee6a99e8f5bceb9e43bea4aeeac8639a8b5a8d32feba4b2e6246a9236a6"
+  },
+  "id": "qeb9hpqx5QkTAd4WcMYoT",
+  "tags": []
+}
