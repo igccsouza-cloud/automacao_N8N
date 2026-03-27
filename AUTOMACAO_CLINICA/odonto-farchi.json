@@ -1,0 +1,2466 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -6544,
+        -256
+      ],
+      "id": "0d2b0b83-e6b8-47bf-b2f3-7c1304057fae",
+      "name": "Telegram Trigger",
+      "webhookId": "10106636-cee7-44fc-97b3-7e40de21634d"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4944,
+        -608
+      ],
+      "id": "96f20da5-43be-41aa-8e29-526d53c33def",
+      "name": "Send a text message",
+      "webhookId": "11f1bfe4-765e-46e5-bd59-2b480574b993"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pacientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "telefone",
+              "lookupValue": "={{ $json.message.chat.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -6336,
+        -256
+      ],
+      "id": "4cb2f69e-778c-4969-80be-d044afe43b80",
+      "name": "Get row(s) in sheet1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5400e1c5-b4db-4efd-be7e-cd560b4bb598",
+              "leftValue": "={{ $json.telefone }}",
+              "rightValue": "=0",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -6128,
+        -256
+      ],
+      "id": "b7e8c23f-50d2-4ad0-b054-0d87263fe921",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "content": "Verifica se ja é um cliente cadastrado",
+        "height": 192,
+        "width": 256,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -6176,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "4c2dc341-83c2-4dbe-a4f3-100e0445f768",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -5840,
+        -400
+      ],
+      "id": "4fff0a50-8d03-41c9-86b2-a312cf7e4174",
+      "name": "OpenAI Chat Model2"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Consulta o Google Calendar para verificar se um horário está disponível.\nUse SOMENTE no Passo 2, após o paciente informar data e hora.\n\nComo usar: passe a data e hora solicitada pelo paciente.\nUm horário está OCUPADO apenas se houver um evento com início EXATAMENTE igual ao solicitado.\nSe a lista vier vazia ou nenhum evento coincidir com o horário exato, o horário está LIVRE.\nNUNCA diga que está ocupado sem encontrar uma correspondência exata de data e hora.",
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": "igccsouza@gmail.com"
+        },
+        "limit": 60,
+        "timeMin": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('After', ``, 'string') }}",
+        "timeMax": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Before', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -5504,
+        -400
+      ],
+      "id": "1dbd6f0f-b2d2-407a-abf7-ebfd68968f7c",
+      "name": "verificar agenda1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $('AI Agent1').item.json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -5088,
+        64
+      ],
+      "id": "5eedccb5-f036-4cae-b3ce-49b5b796c92a",
+      "name": "Send a text message1",
+      "webhookId": "7e03595d-7f5d-4b8c-b147-ce9c7e1a26ea"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ String($('Telegram Trigger').item.json.message.chat.id) }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -5696,
+        272
+      ],
+      "id": "236de127-473f-478b-91d4-5801631259c8",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = items[0].json.output;\n\nlet data;\ntry {\n    const jsonMatch = response.match(/\\{[\\s\\S]*\\}/);\n    data = JSON.parse(jsonMatch[0]);\n} catch (e) {\n    return [{ json: { error: \"JSON inválido\", raw: response } }];\n}\n\nreturn [{\n    json: {\n        status:        data.status || data.cadastro_status || \"\",\n        nome:          data.nome || \"\",\n        email:         data.email || \"\",\n        plano:         data.plano || \"\",\n        telefone:      String(data.telefone || \"\"),\n        data_cadastro: data.data_cadastro || data.datacadastro || \"\"\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5504,
+        64
+      ],
+      "id": "cbc48350-a56f-4631-a672-30b919ce31e4",
+      "name": "Code in JavaScript",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pacientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "data_cadastro": "={{ $json.data_cadastro }}",
+            "telefone": "={{ $json.telefone }}",
+            "email": "={{ $json.email }}",
+            "plano": "={{ $json.plano }}",
+            "nome": "={{ $json.nome }}"
+          },
+          "matchingColumns": [
+            "nome"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "plano",
+              "displayName": "plano",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "data_cadastro",
+              "displayName": "data_cadastro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "ultima_consulta",
+              "displayName": "ultima_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -5296,
+        64
+      ],
+      "id": "d7cb46ac-2ce7-4716-9bf5-0363aebf0010",
+      "name": "Append or update row in sheet"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lê a planilha de pacientes cadastrados da clínica.\nUse SOMENTE no Passo 3, após confirmar que o horário está livre.\n\nComo usar: filtre pela coluna \"telefone\" usando o ID de contato do paciente.\nRetorna: nome completo, email e plano do paciente.\nGuarde esses três valores — eles serão usados no resumo e no JSON final.\nNUNCA chame esta tool antes de verificar a agenda.",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pacientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -5344,
+        -400
+      ],
+      "id": "ff1428de-49ab-4a8d-ac00-418855febbc2",
+      "name": "paciente_planilha"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lê a planilha de planos disponíveis e seus respectivos valores de consulta.\nUse SOMENTE no Passo 3, logo após chamar paciente_planilha.\n\nComo usar: localize o plano retornado pela paciente_planilha e leia o valor correspondente.\nNUNCA assuma ou invente um valor — sempre consulte esta tool.\nNUNCA chame esta tool sem antes ter o nome do plano em mãos.",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 965750423,
+          "mode": "list",
+          "cachedResultName": "Planos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=965750423"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -5200,
+        -400
+      ],
+      "id": "ac2a4eae-bf12-476c-b2d8-a000db595a97",
+      "name": "planos_planilha"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Lê a planilha de consultas agendadas da clínica.\nUse SOMENTE nos fluxos de cancelamento e reagendamento.\nFiltre pela coluna \"telefone\" para obter o event_id e data_consulta da consulta atual do paciente.\nNUNCA use esta tool para agendamentos novos.",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -5056,
+        -400
+      ],
+      "id": "3b01ab04-602f-4f03-82ce-63fe381c6c90",
+      "name": "consultas_planilha"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $input.first().json.output;\nconst jsonMatch = output.match(/\\{[\\s\\S]*\\}/);\n\nif (!jsonMatch) {\n  return { json: { action: \"nenhuma\", output } };\n}\n\nconst parsed = JSON.parse(jsonMatch[0]);\n\nreturn {\n  json: {\n    action:        parsed.action || \"nenhuma\",\n    event_id:      parsed.event_id || \"\",\n    telefone:      parsed.telefone || \"\",\n    data_consulta: parsed.data_consulta || \"\",\n    nome_paciente: parsed.nome_paciente || \"\",\n    valor:         parsed.valor || \"\",\n    pagamento_status: parsed.pagamento_status || \"pendente\",\n    email_paciente: parsed.email_paciente || \"\"\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5120,
+        -832
+      ],
+      "id": "9488899c-778d-4052-bdd3-e6868e0f0c44",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e07a0257-8745-4d60-b9b9-92ce511f05be",
+              "leftValue": "={{ $json.output.includes('\"action\"') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -5456,
+        -624
+      ],
+      "id": "1b03601f-1d10-4f64-b8f5-65423fe4d542",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {
+          "systemMessage": "=Você é um assistente virtual acolhedor da Odonto-Farchi. Seu objetivo é cadastrar novos pacientes de forma leve e conversacional — como se fosse uma recepcionista simpática, não um formulário.\n\n## REGRAS\n- NUNCA peça Telefone nem Data de Cadastro, pois são automáticos.\n- Colete Nome Completo, E-mail e Plano de forma natural, sem parecer um interrogatório.\n- Não faça todas as perguntas de uma vez. Colete um dado por mensagem, no ritmo da conversa.\n- Se a pessoa já informar algum dado espontaneamente, não pergunte de novo.\n- Use linguagem informal e calorosa, mas profissional.\n\n## FLUXO SUGERIDO\n- Primeiro, responda ao cumprimento da pessoa de forma calorosa e se apresente brevemente como assistente da clínica.\n- Explique que vai precisar de algumas informações rápidas para o cadastro.\n- Colete os dados gradualmente: primeiro o nome, depois o e-mail, depois o plano.\n- Confirme cada dado recebido antes de pedir o próximo.\n\n## PLANOS DISPONÍVEIS\nParticular Padrão (R$150), Particular Padrão 2 (R$110), Campanha 97 (R$97), Campanha 90 (R$90), Plano de Saúde (R$85).\nSe o paciente não souber o plano, ofereça as opções acima.\n\n## FINALIZAÇÃO\nAssim que tiver Nome, E-mail e Plano, responda APENAS este JSON sem nenhum texto antes ou depois:\n{\"status\": \"cadastro_completo\", \"nome\": \"NOME_AQUI\", \"email\": \"EMAIL_AQUI\", \"plano\": \"PLANO_AQUI\", \"telefone\": \"{{ $('Telegram Trigger').item.json.message.chat.id }}\", \"data_cadastro\": \"{{ $now.format('dd/MM/yyyy') }}\"}\n\nApós o sistema processar, diga: \"Perfeito, [Nome]! Cadastro feito com sucesso 😊 Agora já posso te ajudar a marcar sua consulta. Qual data você prefere?\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -5856,
+        64
+      ],
+      "id": "0655de28-0070-487a-9346-7467d27af932",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -5856,
+        272
+      ],
+      "id": "dc87ef3b-7dea-4589-b0da-31e80a0a6d8f",
+      "name": "OpenAI Chat Model1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ \"✅ Consulta confirmada! Te esperamos em \" + $('Code in JavaScript1').item.json.data_consulta + \". Até lá! 😊\" }}\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4112,
+        -976
+      ],
+      "id": "d77024fb-b51d-4738-9d8d-58a7299b441e",
+      "name": "Send a text message2",
+      "webhookId": "21655700-4e00-46fa-bf0e-dab30b7ea99d"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "options": {
+          "systemMessage": "=Você é Sofia, a assistente virtual da Odonto-Farchi. Sua comunicação é acolhedora, mas extremamente eficiente e focada em dados.\n\nO paciente já é cadastrado.\nID de Contato (Telefone): {{ $('Telegram Trigger').item.json.message.chat.id }}\nNUNCA peça nome, telefone ou e-mail. Se precisar desses dados, use as ferramentas de busca.\n\n# REGRAS DE OURO\n\nMemória de Saudação: Se o histórico mostrar que você já cumprimentou o usuário, não diga \"Olá\" novamente. Vá direto ao assunto.\n\nDatas Relativas: Converta \"amanhã\", \"segunda-feira\" ou \"próxima semana\" para o formato DD/MM/YYYY usando a data atual ({{ $now.format('dd/MM/yyyy') }}) como base.\n\nFidelidade à Planilha: Você não inventa horários nem preços. Toda informação deve vir das ferramentas.\n\nJSON de Ação: O JSON é a sua \"assinatura de execução\". Ele deve ser colocado ao final da resposta somente quando o paciente confirmar explicitamente.\n\n# FLUXO DE AGENDAMENTO\n\nPASSO 1: Coleta de Intenção-\nColeta de Intenção\nIdentifique se o paciente quer: Agendar, Reagendar, Cancelar ou Saber Preços.\n\nIMPORTANTE: Trate cada intenção como independente. Se o paciente disser \"quero agendar\" \nou \"quero marcar uma consulta\", inicie SEMPRE o fluxo de agendar_consulta do zero, \nindependente do histórico da conversa. NUNCA reutilize o JSON de uma ação anterior.\nSe Agendar: Peça data e hora (se ele não informar ambos de uma vez).\nIdentifique se o paciente quer: Agendar, Reagendar, Cancelar ou Saber Preços.\nSe Agendar: Peça data e hora (se ele não informar ambos de uma vez).\n\nPASSO 2: Verificação de Agenda\nUse a ferramenta verificar_agenda com a data/hora solicitada.\nUm horário está OCUPADO apenas se existir um evento cujo \"start\" seja exatamente igual à data e hora solicitada.\nSe nenhum evento coincidir com o horário exato, o horário está LIVRE.\nSe ocupado: Informe o conflito e sugira que o paciente escolha outro horário.\nSe livre: Prossiga para o Passo 3.\n\nPASSO 3: Identificação e Precificação (CRÍTICO)\nAntes de confirmar o agendamento, realize estas duas buscas em silêncio:\n1. Chame paciente_planilha filtrando pela coluna \"telefone\" com o valor {{ $('Telegram Trigger').item.json.message.chat.id }} para obter Nome, Telefone, Email e Plano. Guarde esses valores.\n2. Chame planos_planilha usando o Plano encontrado para obter o Valor da consulta.\n\nPASSO 4: Resumo e Confirmação\nApresente o resumo formatado:\n\"Encontrei seu cadastro, [Nome]! Aqui está o resumo:\n📅 Data: [data] às [hora]\n💳 Plano: [nome do plano]\n💰 Valor: R$ [valor]\nPosso confirmar o agendamento?\"\n\nPASSO 5: Saída de Dados (JSON)\nApós o \"Sim\" ou \"Pode marcar\", responda com uma breve frase de sucesso e o JSON abaixo.\nUse os dados coletados nas ferramentas. O event_id deve ser enviado vazio \"\", pois outro sistema irá preenchê-lo.\n\n{\n  \"action\": \"agendar_consulta\",\n  \"nome_paciente\": \"[Nome retornado pela paciente_planilha]\",\n  \"data_consulta\": \"DD/MM/YYYY HH:mm\",\n  \"valor\": [valor numérico, sem aspas],\n  \"pagamento_status\": \"pendente\",\n  \"event_id\": \"\",\n  \"telefone\": \"[telefone retornado pela paciente_planilha]\",\n  \"email_paciente\": \"[email retornado pela paciente_planilha]\"\n}\n\n# CANCELAMENTO\n\n1. Use consultas_planilha filtrando pela coluna \"telefone\" com o valor {{ $('Telegram Trigger').item.json.message.chat.id }} para obter o event_id e a data da consulta atual.\n2. Confirme com o paciente: \"Deseja cancelar sua consulta do dia [data]? (sim/não)\"\n3. Após confirmação, retorne APENAS este JSON:\n\n{\n  \"action\": \"cancelar_consulta\",\n  \"event_id\": \"[event_id obtido via consultas_planilha]\",\n  \"telefone\": \"[telefone do paciente]\"\n}\n\n# REAGENDAMENTO\n\n1. Use consultas_planilha filtrando pela coluna \"telefone\" com o valor {{ $('Telegram Trigger').item.json.message.chat.id }} para obter o event_id e a data da consulta atual.\n2. Peça a nova data e hora.\n3. Use verificar_agenda para confirmar disponibilidade do novo horário.\n4. Apresente resumo e peça confirmação.\n5. Após confirmação, retorne APENAS este JSON:\n\n{\n  \"action\": \"reagendar_consulta\",\n  \"event_id\": \"[event_id obtido via consultas_planilha]\",\n  \"data_consulta\": \"DD/MM/YYYY HH:mm\",\n  \"telefone\": \"[telefone do paciente]\"\n}\n\n# RESTRIÇÕES\n\nNão atenda assuntos fora de odontologia.\nSe consultas_planilha não retornar nenhuma consulta para o telefone do paciente, informe que não encontrou consultas ativas.\nSe paciente_planilha não retornar nenhum cadastro, peça desculpas e encaminhe para o fluxo de cadastro."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -5808,
+        -624
+      ],
+      "id": "bb969a59-d94d-45ba-b0bb-73f0ac8b1739",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "649121ae-ae01-4a23-bd1e-336f59aa1c69",
+              "leftValue": "={{ $json.action }}",
+              "rightValue": "agendar_consulta",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -4912,
+        -832
+      ],
+      "id": "2822718d-1ee0-4dc5-86a1-ba75ab5918eb",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Consulta reagendada com sucesso. Te esperamos em {{ $('Append or update row in sheet1').item.json.data_consulta }}! 😊",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4320,
+        -688
+      ],
+      "id": "f23f65ea-21b4-48b2-9db6-4b7843c9f808",
+      "name": "Send a text message5",
+      "webhookId": "21655700-4e00-46fa-bf0e-dab30b7ea99d"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ String($('Telegram Trigger').item.json.message.chat.id) }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -5664,
+        -400
+      ],
+      "id": "ec1feb8a-120f-43a3-a864-c2183d3dcc6a",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "data_consulta": "={{ $json.data_consulta }}",
+            "telefone": "={{ $json.telefone }}",
+            "action": "={{ $json.action }}",
+            "nome_paciente": "={{ $json.nome_paciente }}",
+            "valor": "={{ $json.valor }}",
+            "email_paciente": "={{ $json.email_paciente }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome_paciente",
+              "displayName": "nome_paciente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "email_paciente",
+              "displayName": "email_paciente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "data_consulta",
+              "displayName": "data_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "expectativa_pagamento",
+              "displayName": "expectativa_pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "comparecimento_status",
+              "displayName": "comparecimento_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "pagamento_status",
+              "displayName": "pagamento_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -4576,
+        -976
+      ],
+      "id": "9a4d4839-d337-4877-99c8-84eff99703f5",
+      "name": "Append or update row in sheet1"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pacientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('If3').item.json.telefone }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "plano",
+              "displayName": "plano",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "data_cadastro",
+              "displayName": "data_cadastro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ultima_consulta",
+              "displayName": "ultima_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -4368,
+        -976
+      ],
+      "id": "3e0c94ac-daaf-491b-b66d-e33eceba4389",
+      "name": "Append or update row in sheet2"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2672,
+        -48
+      ],
+      "id": "d42eb3be-5401-4f8e-acaa-cf37b7f4d21a",
+      "name": "Google Sheets Trigger"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "igccsouza@gmail.com",
+          "mode": "list",
+          "cachedResultName": "igccsouza@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $json.email_paciente }}"
+          ],
+          "description": "=Tel: {{ $json.telefone }} | Valor: R$ {{ $json.valor }} | Email: {{ $json.email_paciente }}",
+          "summary": "=Consulta: {{ $json.nome_paciente }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -2208,
+        208
+      ],
+      "id": "6c720369-8c50-481b-a984-ca4f7637f7ab",
+      "name": "Create an event in Google Calendar"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2384,
+        224
+      ],
+      "id": "667fec76-8503-41ee-a78b-60e86c0a3e31",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ JSON.stringify($input.first().json) }}",
+        "options": {
+          "systemMessage": "=## FUNÇÃO\nVocê é um Operador de Agenda Técnico especializado em formato brasileiro (DD/MM/YYYY). Sua única função é processar comandos de uma planilha e espelhá-los no Google Calendar.\n\n## DADOS DE ENTRADA\nVocê receberá um JSON com:\n- action: (agendar_consulta, reagendar_consulta, cancelar_consulta)\n- event_id: ID atual no calendário (se houver)\n- data_consulta / nova_data: {{ $json.data_consulta }} (IMPORTANTE: O formato é DIA/MÊS/ANO HH:MM)\n- nome_paciente: Nome para o título do evento\n\n## LOGICA DE EXECUÇÃO (OBRIGATÓRIO)\n1. SE action == \"agendar_consulta\":\n   - Use 'Create an event' com a 'data_consulta'.\n2. SE action == \"reagendar_consulta\":\n   - Delete o 'event_id' atual e crie um novo com a 'nova_data'.\n3. SE action == \"cancelar_consulta\":\n   - Delete o 'event_id' atual.\n\n## REGRAS TÉCNICAS DE DATA (CRÍTICO)\n- PADRÃO DA PLANILHA: Os dados chegam como DIA/MÊS/ANO (ex: 02/04 é DOIS DE ABRIL).\n- REFERÊNCIA ATUAL: Hoje é {{ $now.setZone('America/Sao_Paulo').format('dddd, DD/MM/YYYY HH:mm') }}.\n- CONVERSÃO PARA O TOOL: Ao chamar a ferramenta, converte para YYYY-MM-DDTHH:mm:00-03:00.\n  - Exemplo: \"02/04/2026 14:00\" -> Deve ser \"2026-04-02T14:00:00-03:00\".\n  - NUNCA inverta o dia com o mês.\n\n## REGRAS DE EXECUÇÃO\n- FUSO HORÁRIO: 'America/Sao_Paulo' (-03:00).\n- NÃO dê explicações. Responda apenas o JSON.\n\n## SAÍDA OBRIGATÓRIA (APENAS JSON)\n{\n  \"calendar_sync\": \"ok\",\n  \"event_id\": \"ID_GERADO_OU_ATUAL\",\n  \"status_processamento\": \"concluido\"\n}\n\n- Attendees: email_paciente recebido no input — adicione como participante para o Google enviar o convite automaticamente."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2352,
+        -48
+      ],
+      "id": "7c72ae28-9728-4d21-9191-55c733d1d8d5",
+      "name": "AI Agent",
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "event_id": "={{ $json.event_id }}",
+            "telefone": "={{ $('Google Sheets Trigger').item.json.telefone }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome_paciente",
+              "displayName": "nome_paciente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email_paciente",
+              "displayName": "email_paciente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "data_consulta",
+              "displayName": "data_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "expectativa_pagamento",
+              "displayName": "expectativa_pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "comparecimento_status",
+              "displayName": "comparecimento_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "pagamento_status",
+              "displayName": "pagamento_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1568,
+        80
+      ],
+      "id": "beabe153-2592-48cb-bcf3-b87ccd8c53fd",
+      "name": "Append or update row in sheet3"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "igccsouza@gmail.com",
+          "mode": "list",
+          "cachedResultName": "igccsouza@gmail.com"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -2016,
+        208
+      ],
+      "id": "88ffc9c2-8936-4c2e-ae96-e18328ddbe40",
+      "name": "Delete an event in Google Calendar",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fa003b1c-a7d6-4f7b-9e0a-a534425e169c",
+              "leftValue": "={{ $('Google Sheets Trigger').item.json.action }}",
+              "rightValue": "cancelar_consulta",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1792,
+        -48
+      ],
+      "id": "7f4cfa37-d786-45ec-9571-04cc7e51d2a5",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "clear": "specificRows",
+        "startIndex": "={{ $json.row_number }}",
+        "rowsToDelete": 10
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1376,
+        -144
+      ],
+      "id": "5f8aa4b1-0afb-4eff-9508-1b3054dcb9bf",
+      "name": "Clear sheet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Pega o que a IA escreveu\nconst output = $input.first().json.output || \"\";\n\n// Tenta achar o JSON no meio do texto\nconst jsonMatch = output.match(/\\{[\\s\\S]*\\}/);\nlet parsed = {};\n\nif (jsonMatch) {\n    try {\n        parsed = JSON.parse(jsonMatch[0]);\n    } catch (e) {\n        // Se der erro no parse, mantemos o objeto vazio\n    }\n}\n\n// Retorna exatamente o que o nó de \"Append or Update\" precisa\nreturn {\n  json: {\n    event_id: parsed.event_id || \"\",\n    // Aqui usamos a referência direta do input do nó, que é mais seguro\n    row_number: $input.first().json.row_number || \"\"\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2000,
+        -48
+      ],
+      "id": "9973e4e1-db6f-4ce8-8fa7-0fe0da608106",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1584,
+        -144
+      ],
+      "id": "7e5e474c-d433-43c4-948a-730d6038e93e",
+      "name": "Get row(s) in sheet3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "data_consulta": "={{ $json.data_consulta }}",
+            "telefone": "={{ $json.telefone }}",
+            "action": "={{ $json.action }}",
+            "row_number": 0
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome_paciente",
+              "displayName": "nome_paciente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email_paciente",
+              "displayName": "email_paciente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "data_consulta",
+              "displayName": "data_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "expectativa_pagamento",
+              "displayName": "expectativa_pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "comparecimento_status",
+              "displayName": "comparecimento_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "pagamento_status",
+              "displayName": "pagamento_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -4592,
+        -688
+      ],
+      "id": "39b9224f-c2f3-43ab-9c2a-38536512cae8",
+      "name": "Update row in sheet"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2960,
+        -1008
+      ],
+      "id": "2911afb0-63f3-4aba-afc6-03902347e351",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2416,
+        -1008
+      ],
+      "id": "01bb24bd-51f5-414a-b252-5c9f4f497e32",
+      "name": "Get row(s) in sheet2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fa5f1fba-c8ee-432a-854c-86398fd6dd60",
+              "leftValue": "={{ $json.comparecimento_status }}",
+              "rightValue": "não compareceu",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1616,
+        -1008
+      ],
+      "id": "93cd8d87-5999-4dec-bc5a-bdb9091cc304",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Get row(s) in sheet2').item.json.telefone }}",
+        "text": "=Olá, {{ $('Get row(s) in sheet2').item.json.nome_paciente }}! 😊 Notamos que você não pôde comparecer à sua consulta de hoje na Odonto-Farchi. Tudo bem por aí?\n\nQuando quiser, é só me chamar aqui para remarcarmos em um horário mais conveniente para você. Estamos sempre à disposição! 🦷",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1184,
+        -1024
+      ],
+      "id": "a63bfe76-872b-4750-83d0-0f95da1f3981",
+      "name": "Send a text message4",
+      "webhookId": "6bf7c8e6-61da-4b34-8738-8033476e680e"
+    },
+    {
+      "parameters": {
+        "content": "Atendente sofia. \natende ao cliente, entende suas necessidades, faz cadastro, agendamento, reagendamento e cancelamento na planilha.",
+        "height": 1792,
+        "width": 3520,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -6704,
+        -1104
+      ],
+      "typeVersion": 1,
+      "id": "7033ab68-afe0-4f4e-9a37-b9446caf0546",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "Lembrete de não comparecimento.\nverifica se o cliente não compareceu duas horas após o horario marcado e envia uma mensagem",
+        "height": 304,
+        "width": 2384,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3072,
+        -1104
+      ],
+      "typeVersion": 1,
+      "id": "8ec3c8e3-8388-43d5-b743-a10ca8cd52aa",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Lembrete de manutenção mensal.\nverifica a data da ultima consulta e manda uma mensagem.",
+        "height": 464,
+        "width": 2384
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3072,
+        -768
+      ],
+      "typeVersion": 1,
+      "id": "c1eeb791-6eac-4fc4-b980-1936e789252e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "Fluxo agendador.\nverifica as alteraçaões feitas na planilha e conltas e agenda, reagenda ou cancela uma consulta dependendo da action",
+        "height": 960,
+        "width": 2384,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3072,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "fa6aab5d-dbc3-4e6f-b755-108545117c61",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pacientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2496,
+        -688
+      ],
+      "id": "466aadc2-ca9e-4332-a270-06e7c1085fd1",
+      "name": "Get Pacientes"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2496,
+        -464
+      ],
+      "id": "1c67d35a-c50a-41dc-973d-50bb74aafd37",
+      "name": "Get Consultas"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Pacientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ultima_consulta": "={{ $json.data_consulta.split(' ')[0] }}",
+            "telefone": "={{ $json.telefone }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "plano",
+              "displayName": "plano",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "data_cadastro",
+              "displayName": "data_cadastro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ultima_consulta",
+              "displayName": "ultima_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1824,
+        -688
+      ],
+      "id": "f8bf2da9-7ad8-4bcf-b3bb-498bb1ad8a36",
+      "name": "Atualiza ultima_consulta"
+    },
+    {
+      "parameters": {
+        "jsCode": "const hoje = new Date();\nhoje.setHours(12, 0, 0, 0);\n\nconst telefonesComConsulta = new Set(\n  $input.all()\n    .filter(i => i.json.data_consulta)\n    .map(i => String(i.json.telefone))\n);\n\nconst pacientesParaLembrar = [];\n\nfor (const item of $input.all()) {\n  const p = item.json;\n  if (!p.ultima_consulta || !p.telefone || !p.nome) continue;\n  if (telefonesComConsulta.has(String(p.telefone))) continue;\n\n  const [dia, mes, ano] = p.ultima_consulta.split('/');\n  const dataConsulta = new Date(parseInt(ano), parseInt(mes) - 1, parseInt(dia), 12, 0, 0);\n  const diasPassados = Math.floor((hoje - dataConsulta) / (1000 * 60 * 60 * 24));\n\n  if (diasPassados === 30) {\n    pacientesParaLembrar.push({\n      json: {\n        telefone: p.telefone,\n        nome: p.nome,\n        dias: diasPassados\n      }\n    });\n  }\n}\n\nreturn pacientesParaLembrar;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1600,
+        -560
+      ],
+      "id": "ca619272-aa5f-4e3c-87e5-2d6877cd8a2d",
+      "name": "Code Lembrete"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.telefone }}",
+        "text": "=Olá, {{ $json.nome }}! 😊 Já faz 30 dias desde sua última consulta na Odonto-Farchi. Que tal agendar uma revisão? É só me chamar aqui!",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1184,
+        -560
+      ],
+      "id": "8c93f26c-4356-4802-9221-af742c735440",
+      "name": "Telegram Lembrete",
+      "webhookId": "cebd2c9a-5c70-4edf-847e-b4793e9d55ae"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2736,
+        -576
+      ],
+      "id": "5957f211-1676-4767-92ab-a42763d06471",
+      "name": "Schedule Trigger2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2272,
+        -576
+      ],
+      "id": "a3fcbb99-450d-4151-8c74-85fe00934a0e",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "41723f9a-d48a-42b3-8d2c-df232a72bfb2",
+              "leftValue": "={{ $json.data_consulta ? $json.data_consulta.split(' ')[0] : '' }}",
+              "rightValue": "={{ $now.format('dd/MM/yyyy') }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2048,
+        -576
+      ],
+      "id": "35303d48-19f8-4f6d-aaff-d60d548e4bc5",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "jsCode": "let total = 0;\n\nfor (const item of $input.all()) {\n  const v = parseFloat(item.json.valor);\n  if (!isNaN(v)) total += v;\n}\n\nreturn [{\n  json: {\n    descricao: \"expectativa_pagamento\",\n    valor: total\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1184,
+        80
+      ],
+      "id": "be121edb-aad0-412d-a0f4-a977a7d72132",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telefone": "={{ $('Get row(s) in sheet').item.json.telefone }}",
+            "expectativa_pagamento": "={{ $json.valor }}"
+          },
+          "matchingColumns": [
+            "telefone"
+          ],
+          "schema": [
+            {
+              "id": "telefone",
+              "displayName": "telefone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "nome_paciente",
+              "displayName": "nome_paciente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email_paciente",
+              "displayName": "email_paciente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "data_consulta",
+              "displayName": "data_consulta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "expectativa_pagamento",
+              "displayName": "expectativa_pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "comparecimento_status",
+              "displayName": "comparecimento_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "pagamento_status",
+              "displayName": "pagamento_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -976,
+        80
+      ],
+      "id": "ba408dfa-da2b-4de0-b7e3-cf4b9f908dd1",
+      "name": "Append or update row in sheet4"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA",
+          "mode": "list",
+          "cachedResultName": "odonto-farchi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 79089489,
+          "mode": "list",
+          "cachedResultName": "Consultas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yIRzU8HrNaBU9IV6Sm1rG4lPutNOgjhYtB7HE_H0wHA/edit#gid=79089489"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -1376,
+        80
+      ],
+      "id": "787cfd9b-4912-41e5-b3f7-4a5a426bf5dc",
+      "name": "Get row(s) in sheet"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "verificar agenda1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "paciente_planilha": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "planos_planilha": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultas_planilha": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Clear sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a text message5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Pacientes": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Consultas": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Atualiza ultima_consulta": {
+      "main": [
+        [
+          {
+            "node": "Code Lembrete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Lembrete": {
+      "main": [
+        [
+          {
+            "node": "Telegram Lembrete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get Pacientes",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Consultas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Atualiza ultima_consulta",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code Lembrete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "cb648aad-0225-40f5-85a5-cdf0f29c80dc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4d468bd7535dd8144b189ceea60f8946e52f07321acf750bac146d22b3d0fae3"
+  },
+  "id": "VhnTS7uegC6R1xt0",
+  "tags": []
+}
